@@ -9,10 +9,8 @@ components:
   - alias: theia-editor
     type: cheEditor
     id: eclipse/che-theia/next
-    memoryLimit: 1500Mi
   - alias: backend
     type: kubernetes
-    memoryLimit: 4000Mi
     referenceContent: |
       kind: List
       items:
