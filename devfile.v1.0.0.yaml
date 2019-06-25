@@ -1,10 +1,13 @@
-specVersion: 0.0.1
-name: notify-demo-devfile
+apiVersion: 1.0.0
+metadata:
+  name: notify-demo-devfile
 projects:
   - name: backend
     source:
       type: git
       location: https://github.com/jmatsushita/notify-demo.git
+attributes:
+  persistVolumes: false
 components:
   - alias: theia-editor
     type: cheEditor
