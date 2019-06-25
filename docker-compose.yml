@@ -1,0 +1,61 @@
+version: "3"
+services:
+  saml_idp:
+    image: kristophjunge/test-saml-idp:1.15
+    environment:
+      SIMPLESAMLPHP_SP_ENTITY_ID: iris
+      SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE: http://localhost:16648/saml/sso/idp
+      SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE: http://localhost:16648/saml/sso/idp
+      SIMPLESAMLPHP_ADMIN_PASSWORD: test
+      SIMPLESAMLPHP_SECRET_SALT: salt
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - ./saml-idp/authsources.php:/var/www/simplesamlphp/config/authsources.php
+
+  iris_relay:
+    build: ./iris-relay
+    volumes:
+      - ./iris-relay-config:/home/iris/config
+    ports:
+      - "16648:16648"
+    depends_on:
+      - saml_idp
+      - iris
+  iris:
+    build: ./iris
+    environment:
+      IRIS_CFG_DB_HOST: db
+      IRIS_CFG_DB_USER: iris
+      IRIS_CFG_DB_PASSWORD: password
+    volumes:
+      - ./iris-config:/home/iris/config
+    ports:
+      - "16649:16649"
+    depends_on:
+      - db
+  # The Socat service makes saml_idp appear as localhost:8080
+  # within iris_relay
+  socat:
+    image: alpine/socat
+    network_mode: "service:iris_relay"
+    command:
+      - "TCP-LISTEN:8080,fork"
+      - "TCP:saml_idp:8080"
+    depends_on:
+      - saml_idp
+      - iris_relay
+  db:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: iris
+      MYSQL_USER: iris
+      MYSQL_PASSWORD: password
+    volumes:
+      - ./iris-config/db/schema_0.sql:/docker-entrypoint-initdb.d/0_schema.sql
+      - ./iris-config/db/dummy_data.sql:/docker-entrypoint-initdb.d/dummy_data.sql
+      - ./iris-relay-config/db/schema_v0.sql:/docker-entrypoint-initdb.d/1_schema.sql
