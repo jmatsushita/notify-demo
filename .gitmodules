@@ -1,0 +1,8 @@
+[submodule "iris-relay"]
+	path = iris-relay
+	url = git@github.com:jmatsushita/iris-relay.git
+	branch = master
+[submodule "iris"]
+	path = iris
+	url = git@github.com:jmatsushita/iris.git
+	branch = master
