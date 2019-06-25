@@ -1,0 +1,4 @@
+description: Notify demo stack with iris/iris-relay and saml-idp-php
+tags: ["notify", "iris", "iris-relay", "saml"]
+icon: https://www.eclipse.org/che/images/logo-eclipseche.svg
+globalMemoryLimit: 8000Mi
