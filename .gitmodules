@@ -6,3 +6,6 @@
 	path = iris
 	url = git@github.com:jmatsushita/iris.git
 	branch = master
+[submodule "docker-test-saml-idp"]
+	path = docker-test-saml-idp
+	url = git@github.com:jmatsushita/docker-test-saml-idp.git
